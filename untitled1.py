@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Apr  9 13:29:03 2022
+Created on Mon May  2 10:51:54 2022
 
 @author: jonat
 """
-
+from datetime import datetime
+import numpy as np
 import pandas as pd
 
-data = {'Name':['Renault', 'Duster', 'Maruti', 'Honda City'], 'Ratings':[9.0, 8.0, 5.0, 3.0]}  
+fecha = 'Jun, 2013'
+fecha_split = fecha.split(',')
+fecha_split.insert(1,' 01')
+fecha = ''.join(fecha)
 
-df = pd.DataFrame(data, index = ['position 1', 'position 2', 'position 3', 'position 4'])
 
-for index, row in df.iterrows():
-    if(row.Ratings == 8):
-        print("igual")
-    print(row.Ratings)
+
+

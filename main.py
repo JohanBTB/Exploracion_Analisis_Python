@@ -22,14 +22,28 @@ muestra = modificar_dividir_columna(muestra, " to ", 4, "Release_year", "End_yea
 
 for index, row in muestra.iterrows():
     
-    if row['Release_year']=='Not available':
+    if row['Release_year']=='Not available' or row['End_year']=='?':
         muestra=muestra.drop(index)
-    elif len(row['Release_year'])>9:
-        pd.to_datetime(row['Release_year'], format='%b %d, %Y')
+            
+    
+    elif len(row['Release_year'])==4:
+        nuevo_valor ='Jan 1, '+ row['Release_year']
+        muestra.loc[index,'Release_year'] = nuevo_valor
+        
+        nuevo_valor ='Jan 1, '+ row['End_year']
+        muestra.loc[index,'End_year'] = nuevo_valor
+        
     elif len(row['Release_year'])==9:
-        pd.to_datetime(' '.join(row['Release_year'].split().insert(1,' 01')), format='%b %d, %Y').date()
-    else:
-        pd.to_datetime('Jan 01, '+row['Release_year'] , format='%b %d, %Y')
+        fecha_split = row['Release_year'].split(', ')
+        fecha_split.insert(1, ' 1, ')
+        muestra.loc[index,'Release_year'] = ''.join(fecha_split)
+        
+        fecha_split = row['End_year'].split(', ')
+        fecha_split.insert(1, ' 1, ')
+        muestra.loc[index,'End_year']= ''.join(fecha_split)
+        
+   
+
 
 
 # sample = datos.sample(300)
