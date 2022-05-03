@@ -10,8 +10,8 @@ import pandas as pd
 
 fecha = 'Jun, 2013'
 fecha_split = fecha.split(',')
-fecha_split.insert(1,' 01')
-fecha = ''.join(fecha)
+fecha_split.insert(1,' 01,')
+fecha = ''.join(fecha_split)
 
 
 
