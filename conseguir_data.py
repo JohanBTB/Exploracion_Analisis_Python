@@ -76,6 +76,7 @@ def conseguir_tags4(data:pd.DataFrame, sep:str, num_col_buscar, inicio:int, fin:
 
 
 
+
 # ==============================================================================================================================================
 
 #METODOS QUE DEVUELVEN TODA LA FILA SEGUN EL VALOR INGRESADO
@@ -89,6 +90,22 @@ def conseguir_info_anime(data:pd.DataFrame, pista:str):
     
     return animes
 #Devuelve toda la fila de los animes segun la pista
+
+
+def conseguir_animes_por_genero(data:pd.DataFrame, sep:str, nom_col_buscar, nom_col_devolver):
+    data[nom_col_devolver[-1]] = ''
+    data2 = pd.DataFrame(columns = nom_col_devolver)
+
+    for i in range(len(data)):
+        tags = data.loc[i, nom_col_buscar].split(sep = sep)
+        for tag in tags:
+            fila = data.loc[i, nom_col_devolver]
+            fila[nom_col_devolver[-1]] = tag
+            data2=data2.append(fila, ignore_index = True)
+
+            
+    return data2
+
 
 
 # ==============================================================================================================================================
@@ -151,7 +168,8 @@ def conseguir_animes_por_lista(data: pd.DataFrame, nom_col_devolver:list,nom_col
         print("No se encontro la columna en donde buscar")    
         
     return pd.DataFrame(nom_animes)
-
+#Devuelve las columnas de los animes que tienen en cierta variable el valor
+# de la pista
 
 # ==============================================================================================================================================
 
