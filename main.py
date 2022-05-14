@@ -6,7 +6,7 @@ from conseguir_data import separar_por_tag, conseguir_tags, conseguir_tags2
 from conseguir_data import conseguir_tags3, conseguir_tags4, conseguir_info_anime
 from conseguir_data import conseguir_animes_por_var_numero, conseguir_elementos_unicos
 from conseguir_data import conseguir_animes_por_var_cadena,conseguir_animes_por_palabra
-from conseguir_data import conseguir_animes_por_filtro, conseguir_animes_por_genero
+from conseguir_data import conseguir_animes_por_filtro
 from limpiar_data import limpiar_datos_float, limpiar_datos_int, limpiar_datos_object, limpieza_basica_datos
 from modificar_data import modificar_dividir_columna, modificar_string_a_datetime 
 from graficar_data import graficar_pie_plot, graficar_scatter_plot
@@ -58,26 +58,21 @@ from datetime import datetime
 animes = pd.read_csv('animes_procesado.csv')
 
 
-# import random
-
-# cantidad_de_animes_por_genero = animes['genre'].str.get_dummies("', '").sum()
-
-# colores=[]
-
-# for x in range(len(cantidad_de_animes_por_genero)):
-#     valor = random.random
-#     rgb = (valor(), valor(), valor())
-#     colores.append(rgb)
-
-# cantidad_de_animes_por_genero.plot(kind='barh', title="Cantidad de animes por género",
-#                                    xlabel = "Genero", grid=True, fontsize = 12,
-#                                    color=colores, figsize=(5,12))
-
-
-#Esta última linea fue para eliminar las cadenas que no tenian #ningún valor entre sus llaves
-
 
 # =============================================================================
+# import seaborn as sns
+# 
+# conteo_por_genero = pd.DataFrame(conseguir_tags2(animes, 3, "', '"), columns = ['genre']).sort_values('genre')
+# 
+# colores = sns.color_palette("flare")
+# 
+# plt.figure(figsize=(10,12))
+# 
+# sns.countplot(data = conteo_por_genero,y = 'genre', hue_order='genre' ,palette =colores )
+# 
+# =============================================================================
+
+# =================================Word Cloud==================================
 # import matplotlib.pyplot as plt
 # from wordcloud import WordCloud, ImageColorGenerator
 # from PIL import Image
@@ -111,91 +106,66 @@ animes = pd.read_csv('animes_procesado.csv')
 # lista = WordCloud().process_text(texto)
 # =============================================================================
 
+from datetime import date
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# =============================================================================
-# import matplotlib.pyplot as plt
-# 
-# temp_animes = animes.loc[:,['uid','release_year','episodes','members','popularity', 'score']].copy()
-# temp_animes["agno"] = ""
-# 
-# lista = []
-# for i in range(4):
-#     fin = 2020-(i)*5
-#     fin_fecha=pd.to_datetime(fin, format="%Y")
-#     
-#     inicio = 2020-((i+1)*5)
-#     inicio_fecha = pd.to_datetime(inicio, format="%Y")
-#     
-#     lista.append(temp_animes[(pd.to_datetime(temp_animes['release_year'])>inicio_fecha) &
-#                         (pd.to_datetime(temp_animes['release_year'])<=fin_fecha)])
-#     
-#     lista[i].agno = str(fin)+"-"+str(inicio)
-# 
-#    
-# lista.append(temp_animes[pd.to_datetime(temp_animes['release_year'])<=pd.to_datetime(2000, format="%Y")])    
-# 
-# lista[4].agno = "1970>"
-# 
-# animes_por_fecha = pd.concat(lista)
-# 
-# 
-# import seaborn as sns
-# 
-# 
-# 
-# fig, axs = plt.subplots(1,2, figsize = (15,5), dpi=600)
-# sns.boxplot(x = 'popularity', y = "agno", data = animes_por_fecha,ax = axs[0])
-# axs[0].title.set_text('Popularidad vs Agno')
-# sns.boxplot(x = 'score', y = "agno", data = animes_por_fecha,ax = axs[1])
-# axs[1].title.set_text('Score vs Agno')
-# =============================================================================
+
+temp_animes = animes.loc[:,['uid','release_year','episodes','members','popularity', 'score']]
+temp_animes = temp_animes.astype({'release_year':'datetime64'})
+
+temp_animes_agrupados = temp_animes[temp_animes['release_year'] < datetime(year=2000,month=1,day=1)]
+temp_animes.drop(temp_animes_agrupados.index, inplace=True)
+
+temp_animes_agrupados["release_year"]="<2000"
+
+for i in range(4):
+    fin = datetime(year=2005 + i*5, month=1,day=1)
+    
+    temp = temp_animes[temp_animes['release_year'] <= fin]
+    temp['release_year'] = "{}-{}".format(fin.year-5,fin.year)
+    temp_animes.drop(temp.index, inplace = True)
+    temp_animes_agrupados = pd.concat([temp_animes_agrupados, temp])
+    
 
 
 
+fig, axs = plt.subplots(1,2, figsize = (15,8), dpi=200)
+sns.boxplot(x = 'members', y = "release_year", data = temp_animes_agrupados,ax = axs[0])
+axs[0].title.set_text('Miembros vs Tiempo')
+sns.boxplot(x = 'episodes', y = "release_year", data = temp_animes_agrupados,ax = axs[1])
+axs[1].title.set_text('Episodios vs Tiempo')
+
+
+#===================================Scatterplot===================================
 
 
 
-# data = animes.describe(include="all")
-
-
-# demon = conseguir_animes_por_palabra(animes,['title','score'],'synopsis','demon')
-
-# conjunto_tags = conseguir_tags3(animes, "', '", 3, 2, 2,)
-
-# conjunto_tags_repeticiones = conseguir_tags4(animes, "', '", 3,2,2)
-
-# cantidad_de_anime_por_genero=pd.Series(conjunto_tags_repeticiones).value_counts()
-
-# por_genero = animes['genre'].str.get_dummies("', '").sum()
-
-
-
-# animes2 = conseguir_animes_por_genero(animes, "', '",'genre', ['score', 'popularity', 'genre2'])
-
-# animes2['popularity'] = animes2['popularity'].astype(int)
-
-
-# animes_agrupados = animes2.groupby(by=['genre2']).agg(['mean','median'])
-
-# import seaborn as sns
-
-
-# animes_mediana = animes2.groupby('genre2', as_index=False).median()
+# temp_animes = animes.loc[:, ['uid', 'score', 'popularity', 'genre']]
+# temp_animes['genre'] = temp_animes['genre'].str.split("', '")
+# temp_animes = temp_animes.explode('genre')
 
 
 
 #========================    MEDIA     ===================================================================================
 
-# animes_media = animes2.groupby('genre2', as_index=False).mean()
+# animes_agrupados = temp_animes.groupby('genre', as_index = False).agg(['mean','median'])
+
+
+# animes_media = temp_animes.groupby('genre', as_index=False).mean()
+
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+
 # fig, axs = plt.subplots(figsize=(8,12))
 
 # axs = sns.scatterplot(x = 'score', y = 'popularity', data = animes_media,
-#                 hue_order = list(animes_media['genre2']), hue='genre2')
+#                 hue_order = list(animes_media['genre']), hue='genre')
 
 # for i in range(len(animes_media)):
 #     fila = animes_media.loc[i, :]
-#     plt.text(x=fila['score']+0.07,y=fila['popularity'],s=fila['genre2'], 
-#              fontdict=dict(color='red',size=10))
+#     plt.text(x=fila['score']+0.07,y=fila['popularity'],s=fila['genre'], 
+#               fontdict=dict(color='red',size=10))
 
 
 
@@ -203,32 +173,37 @@ animes = pd.read_csv('animes_procesado.csv')
 # fig, axs = plt.subplots(figsize=(12,13))
 
 # axs = sns.scatterplot(x = 'score', y = 'popularity', data = animes_media,
-#                 hue_order = list(animes_media['genre2']), hue='genre2')
+#                 hue_order = list(animes_media['genre']), hue='genre')
 
 # for i in range(len(animes_media)):
     
 #     fila = animes_media.loc[i, :]
 #     if fila['score']<6.5:
 #         continue
-#     plt.text(x=fila['score']+0.01,y=fila['popularity'],s=fila['genre2'], 
-#              fontdict=dict(color='red',size=10))
+#     plt.text(x=fila['score']+0.01,y=fila['popularity'],s=fila['genre'], 
+#               fontdict=dict(color='red',size=10))
 
 # plt.xlim((6.5,7.3))
-
+# plt.ylim((2000,9000))
 
 
 
 #========================    MEDIANA     ====================================================
 
+# animes_mediana = temp_animes.groupby('genre', as_index =False).median()
+
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+
 # fig, axs = plt.subplots(figsize=(8,12))
 
 # axs = sns.scatterplot(x = 'score', y = 'popularity', data = animes_mediana,
-#                 hue_order = list(animes_mediana['genre2']), hue='genre2')
+#                 hue_order = list(animes_mediana['genre']), hue='genre')
 
 # for i in range(len(animes_mediana)):
 #     fila = animes_mediana.loc[i, :]
-#     plt.text(x=fila['score']+0.07,y=fila['popularity'],s=fila['genre2'], 
-#              fontdict=dict(color='red',size=10))
+#     plt.text(x=fila['score']+0.07,y=fila['popularity'],s=fila['genre'], 
+#               fontdict=dict(color='red',size=10))
 
 
 
@@ -236,63 +211,138 @@ animes = pd.read_csv('animes_procesado.csv')
 # fig, axs = plt.subplots(figsize=(12,13))
 
 # axs = sns.scatterplot(x = 'score', y = 'popularity', data = animes_mediana,
-#                 hue_order = list(animes_mediana['genre2']), hue='genre2')
+#                 hue_order = list(animes_mediana['genre']), hue='genre')
 
 # for i in range(len(animes_mediana)):
     
 #     fila = animes_mediana.loc[i, :]
 #     if fila['score']<6.5:
 #         continue
-#     plt.text(x=fila['score']+0.01,y=fila['popularity'],s=fila['genre2'], 
-#              fontdict=dict(color='red',size=10))
+#     plt.text(x=fila['score']+0.01,y=fila['popularity'],s=fila['genre'], 
+#               fontdict=dict(color='red',size=10))
 
-# plt.xlim((6.5,7.8))
+# plt.xlim((6.5,7.6))
+# plt.ylim(1500,9000)
+
+# ==================================Pie plot===================================
+# from datetime import date
+# import matplotlib.pyplot as plt
+
+# temp_animes = animes.loc[:,['uid','release_year','episodes','members','popularity', 'score']]
+# temp_animes = temp_animes.astype({'release_year':'datetime64'})
+
+# temp_animes_2000 = temp_animes[temp_animes['release_year'] < datetime(year=2000,month=1,day=1)]
+# temp_animes.drop(temp_animes_2000.index, inplace=True)
+
+# temp_animes_2000["release_year"]="<2000"
+# temp_animes_2000 = temp_animes_2000.groupby('release_year', as_index = True).count()
+# temp_animes = temp_animes.groupby([pd.Grouper(key = 'release_year', freq = "5Ys",
+#                                               closed = "left", origin = "2000-01-01")]).count()
+# temp_animes.index = [x.strftime("%Y")+ "-" + str(x.year+5) for x in temp_animes.index]
+# temp_animes = pd.concat([temp_animes_2000, temp_animes])
 
 
-import matplotlib.pyplot as plt
+  
 
-temp_animes = animes.loc[:,['uid','release_year','members','popularity', 'score']].copy()
-temp_animes["agno"] = ""
+# temp_animes.plot( kind = 'pie', x='release_year', y = 'uid',legend = True, ylabel = '',
+#                  xlabel = temp_animes['popularity'], title = 'Animes emitidos  por periodos de años',
+#                  colormap = plt.get_cmap('cool'), figsize=(10,13), shadow = True, autopct = "%1.1f%%",
+#                  fontsize=12)
 
-lista = []
-for i in range(4):
-    fin = 2020-(i)*5
-    fin_fecha=pd.to_datetime(fin, format="%Y")
+# plt.legend(loc='right')
+# 
+# 
+# =============================================================================
+
+# =======================Barplot==============================================
+
+# animes_temp = animes.loc[:,['uid','title','genre','score']]
+# animes_temp['genre'] = animes['genre'].str.split("', '")
+# animes_temp = animes_temp.explode('genre')
+
+# animes_conteo = animes_temp.groupby(by='genre', as_index=False).count()
+# animes_conteo.rename(columns = {'score':'quantity'}, inplace =True)
+# animes_conteo.sort_values(by='quantity', inplace=True, ascending=False)
+# top_animes_por_cantidad = animes_conteo['genre'][:10]
+
+
+#---------------------------Puede ser asi-------------------------------------
+
+# animes_temp.drop_duplicates(subset = 'uid', inplace = True)
+
+# generos_max_min = pd.DataFrame(columns = animes_temp.columns)
+# for genero in top_animes_por_cantidad:
+#     genero_df = animes_temp[animes_temp['genre'] == genero].sort_values('score', ascending = False)
     
-    inicio = 2020-((i+1)*5)
-    inicio_fecha = pd.to_datetime(inicio, format="%Y")
+#     genero_max = genero_df.iloc[0,:]
+#     genero_max['valor'] = 'maximum'
     
-    lista.append(temp_animes[(pd.to_datetime(temp_animes['release_year'])>inicio_fecha) &
-                        (pd.to_datetime(temp_animes['release_year'])<=fin_fecha)])
+#     genero_min = genero_df.iloc[-1,:]
+#     genero_min['valor'] = 'minimum'
     
-    lista[i].agno = str(fin)+"-"+str(inicio)
+#     generos_max_min = generos_max_min.append(genero_max).append(genero_min)
+
+
+# -----------------------------Puede ser asi ---------------------------------
+# generos_max_min = pd.DataFrame(columns = animes_temp.columns)
+# for genero in top_animes_por_cantidad:
+#     genero_df = animes_temp[animes_temp['genre'] == genero]
     
-lista.append(temp_animes[pd.to_datetime(temp_animes['release_year'])<=pd.to_datetime(2000, format="%Y")])    
-lista[4].agno = "1970>"
+#     genero_max = animes_temp.loc[genero_df['score'].idxmax()]
+#     genero_max['valor'] = 'maximum'
+    
+#     genero_min = animes_temp.loc[genero_df['score'].idxmin()]
+#     genero_min['valor'] = 'minimum'
+    
+#     generos_max_min = generos_max_min.append(genero_max).append(genero_min)
 
-animes_por_fecha = pd.concat(lista)
+# import seaborn as sns
+# import matplotlib.pyplot as plt
 
-animes_agrupados = animes_por_fecha.groupby(by='agno').count()
- 
-
-animes_agrupados.plot( kind = 'pie', x='agno', y = 'uid',legend = True, ylabel = '',
-                      title = 'Animes emitidos  por años', colormap = plt.get_cmap('cool'),
-                      figsize=(10,13), shadow = True, autopct = "%1.1f%%", fontsize=12)
-
-plt.legend(loc='upper left')
-
-
-
-
-
-
-
-
-
+# plt.figure(figsize=(11,9))
+# sns.barplot(x = 'genre', y = 'score', hue = 'valor', data = generos_max_min)
+# for i in range(len(generos_max_min)):
+#     fila = generos_max_min.iloc[i, :]
+#     score = fila['score']
+#     titulo = fila['title'] if len(fila['title'])<10 else fila['title'][:15]+"..."
+    
+#     if i%2==0:
+#         plt.text(x=i/2-0.3 ,y=(score/2)-2, s = titulo, 
+#               fontdict=dict(color='white',size=15), rotation = 90)
+    
+#     else:
+#         plt.text(x=(i/2)-0.35 ,y=(score/2)-1, s = titulo, 
+#               fontdict=dict(color='white',size=15), rotation = 90)
 
 
+# 
+# =============================================================================
 
-
+# =============================================================================
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+# from datetime import date
+# 
+# temp_animes = animes.loc[:, ['uid','release_year','score','genre']]
+# temp_animes['genre'] = temp_animes['genre'].str.split("', '")
+# temp_animes = temp_animes.explode('genre')
+# temp_animes = temp_animes.astype({'release_year':'datetime64'})
+# 
+# temp_animes = temp_animes[temp_animes['release_year'] > datetime(year=2000,month=1,day=1)]
+# temp_animes = temp_animes.groupby([pd.Grouper(key = 'release_year', freq = "2Y"), 'genre']).agg({'score':'mean'}).reset_index()
+# temp_animes['release_year'] = temp_animes['release_year'].dt.strftime('%Y')
+# 
+# 
+# temp_animes_pivot = temp_animes.pivot(index = 'genre', columns = 'release_year', values = 'score')
+# 
+# 
+# 
+# plt.figure(figsize=(12,9))
+# 
+# sns.heatmap(temp_animes_pivot, cmap="BuRd", center = temp_animes['score'].mean(), annot = True)
+# 
+# 
+# =============================================================================
 
 
 
@@ -330,9 +380,3 @@ plt.legend(loc='upper left')
 # graficar_scatter_plot(datos2 ,'Rating', 'Episodes', 'Studio', list(np.unique(np.array(datos2['Studio']))), titulo="Animes: Episodios - Rating" )
 # 
 # =============================================================================
-
-
-
-
-
-

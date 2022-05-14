@@ -19,7 +19,7 @@ def separar_por_tag(data:pd.DataFrame , name_tag:str, num_col_buscar:int):
     return tabla_por_tag
 #Devuelve un dataframe separado por el tag establecido como argumento
 
-def conseguir_tags(data:pd.DataFrame, num_col_buscar:int):
+def conseguir_tags(data:pd.DataFrame, num_col_buscar:int, sep:str):
     conjunto_tags = {"ejemplo"}
     
     for i in range(len(data)):
@@ -31,10 +31,10 @@ def conseguir_tags(data:pd.DataFrame, num_col_buscar:int):
 #Esta funcion devuelve una lsita de todos los tags que hay en la tabla(no se
 #repiten)
 #Busca en columnas que tengan sus valores separados por coma
-def conseguir_tags2(data:pd.DataFrame, num_col_buscar:int):
+def conseguir_tags2(data:pd.DataFrame, num_col_buscar:int, sep:str):
     conjunto_tags = []
     for i in range(len(data)):
-        tags = data.iloc[i,num_col_buscar].split(sep = ',')
+        tags = data.iloc[i,num_col_buscar].split(sep = sep)
         for tag in tags:
             conjunto_tags.append(tag)
     return conjunto_tags
@@ -73,10 +73,6 @@ def conseguir_tags4(data:pd.DataFrame, sep:str, num_col_buscar, inicio:int, fin:
 #Busca en columnas que tengan sus valores separados por un valor, pero con un
 #inicio y fin determinados.
 
-
-
-
-
 # ==============================================================================================================================================
 
 #METODOS QUE DEVUELVEN TODA LA FILA SEGUN EL VALOR INGRESADO
@@ -90,23 +86,6 @@ def conseguir_info_anime(data:pd.DataFrame, pista:str):
     
     return animes
 #Devuelve toda la fila de los animes segun la pista
-
-
-def conseguir_animes_por_genero(data:pd.DataFrame, sep:str, nom_col_buscar, nom_col_devolver):
-    data[nom_col_devolver[-1]] = ''
-    data2 = pd.DataFrame(columns = nom_col_devolver)
-
-    for i in range(len(data)):
-        tags = data.loc[i, nom_col_buscar].split(sep = sep)
-        for tag in tags:
-            fila = data.loc[i, nom_col_devolver]
-            fila[nom_col_devolver[-1]] = tag
-            data2=data2.append(fila, ignore_index = True)
-
-            
-    return data2
-
-
 
 # ==============================================================================================================================================
 
