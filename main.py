@@ -5,6 +5,7 @@ from conseguir_data import conseguir_tags2
 from modificar_data import modificar_dividir_columna 
 from datetime import datetime
 
+
 # ============================= LIMPIZA DE DATOS ==============================
 # animes = pd.read_csv('animes.csv')
 # animes.dropna(inplace = True)
@@ -76,7 +77,15 @@ from datetime import datetime
 # ============================= COUNTPLOT =====================================
 # import seaborn as sns
 # 
-# conteo_por_genero = pd.DataFrame(conseguir_tags2(animes, 3, "', '"), columns = ['genre']).sort_values('genre')
+# def conseguir_tags(data:pd.DataFrame, num_col_buscar:int, sep:str):
+#     conjunto_tags = []
+#     for i in range(len(data)):
+#         tags = data.iloc[i,num_col_buscar].split(sep = sep)
+#         for tag in tags:
+#             conjunto_tags.append(tag)
+#     return conjunto_tags
+#
+# conteo_por_genero = pd.DataFrame(conseguir_tags(animes, 3, "', '"), columns = ['genre']).sort_values('genre')
 # 
 # colores = sns.color_palette("flare")
 # 
