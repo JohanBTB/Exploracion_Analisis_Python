@@ -5,6 +5,7 @@ from conseguir_data import conseguir_tags2
 from modificar_data import modificar_dividir_columna 
 from datetime import datetime
 
+animes = pd.read_csv('animes_procesado.csv')
 
 # ============================= LIMPIZA DE DATOS ==============================
 # animes = pd.read_csv('animes.csv')
@@ -76,7 +77,7 @@ from datetime import datetime
 
 # ============================= COUNTPLOT =====================================
 # import seaborn as sns
-# 
+
 # def conseguir_tags(data:pd.DataFrame, num_col_buscar:int, sep:str):
 #     conjunto_tags = []
 #     for i in range(len(data)):
@@ -84,15 +85,15 @@ from datetime import datetime
 #         for tag in tags:
 #             conjunto_tags.append(tag)
 #     return conjunto_tags
-#
+
 # conteo_por_genero = pd.DataFrame(conseguir_tags(animes, 3, "', '"), columns = ['genre']).sort_values('genre')
-# 
+
 # colores = sns.color_palette("flare")
-# 
+
 # plt.figure(figsize=(10,12))
-# 
+
 # sns.countplot(data = conteo_por_genero,y = 'genre', hue_order='genre' ,palette =colores )
-# 
+
 # ============================= FIN COUNTPLOT =================================
 
 # ============================= WORD CLOUD ====================================
@@ -141,32 +142,19 @@ from datetime import datetime
 # temp_animes = animes.loc[:,['uid','release_year','episodes','members','popularity', 'score']]
 # temp_animes = temp_animes.astype({'release_year':'datetime64'})
 
-# temp_animes_agrupados = temp_animes[temp_animes['release_year'] < datetime(year=2000,month=1,day=1)]
-# temp_animes.drop(temp_animes_agrupados.index, inplace=True)
-
-# temp_animes_agrupados["release_year"]="<2000"
-
-# for i in range(4):
-#     fin = datetime(year=2005 + i*5, month=1,day=1)
-    
-#     temp = temp_animes[temp_animes['release_year'] <= fin]
-#     temp['release_year'] = "{}-{}".format(fin.year-5,fin.year)
-#     temp_animes.drop(temp.index, inplace = True)
-#     temp_animes_agrupados = pd.concat([temp_animes_agrupados, temp])
-    
-
+# temp_animes['release_year'] = temp_animes['release_year'].map(lambda x: "<2000" if int(x.year)<2000 else 
+#                                                                 "{}-{}".format((int(x.year) - int(x.year)%5), (5 + int(x.year) - int(x.year)%5) ))
 
 
 # fig, axs = plt.subplots(1,2, figsize = (15,8), dpi=200)
-# sns.boxplot(x = 'members', y = "release_year", data = temp_animes_agrupados,ax = axs[0])
+# sns.boxplot(x = 'members', y = "release_year", data = temp_animes,ax = axs[0])
 # axs[0].title.set_text('Miembros vs Tiempo')
-# sns.boxplot(x = 'episodes', y = "release_year", data = temp_animes_agrupados,ax = axs[1])
+# sns.boxplot(x = 'episodes', y = "release_year", data = temp_animes,ax = axs[1])
 # axs[1].title.set_text('Episodios vs Tiempo')
 
 # ============================== FIN BOXPLOT ==================================
 
 # =============================== SCATTERPLOT ==================================
-
 
 
 # temp_animes = animes.loc[:, ['uid', 'score', 'popularity', 'genre']]
@@ -257,36 +245,32 @@ from datetime import datetime
 # ============================== FIN SCATTERPLOT ==============================
 
 # ================================= PIE PLOT ==================================
-# from datetime import date
 # import matplotlib.pyplot as plt
+
+
+
 
 # temp_animes = animes.loc[:,['uid','release_year','episodes','members','popularity', 'score']]
 # temp_animes = temp_animes.astype({'release_year':'datetime64'})
 
-# temp_animes_2000 = temp_animes[temp_animes['release_year'] < datetime(year=2000,month=1,day=1)]
-# temp_animes.drop(temp_animes_2000.index, inplace=True)
-
-# temp_animes_2000["release_year"]="<2000"
-# temp_animes_2000 = temp_animes_2000.groupby('release_year', as_index = True).count()
-# temp_animes = temp_animes.groupby([pd.Grouper(key = 'release_year', freq = "5Ys",
-#                                               closed = "left", origin = "2000-01-01")]).count()
-# temp_animes.index = [x.strftime("%Y")+ "-" + str(x.year+5) for x in temp_animes.index]
-# temp_animes = pd.concat([temp_animes_2000, temp_animes])
-
+# temp_animes['release_year'] = temp_animes['release_year'].map(lambda x: "<2000" if int(x.year)<2000 else 
+#                                                                 "{}-{}".format((int(x.year) - int(x.year)%5), (5 + int(x.year) - int(x.year)%5) ))
 
   
+# temp_animes = temp_animes.groupby('release_year').count()
 
 # temp_animes.plot( kind = 'pie', x='release_year', y = 'uid',legend = True, ylabel = '',
-#                  xlabel = temp_animes['popularity'], title = 'Animes emitidos  por periodos de años',
-#                  colormap = plt.get_cmap('cool'), figsize=(10,13), shadow = True, autopct = "%1.1f%%",
-#                  fontsize=12)
+#                   xlabel = temp_animes['popularity'], title = 'Animes emitidos  por periodos de años',
+#                   colormap = plt.get_cmap('cool'), figsize=(10,13), shadow = True, autopct = "%1.1f%%",
+#                   fontsize=12)
 
 # plt.legend(loc='right')
-# 
-# 
+
+
 # ================================ FIN PIE PLOT ===============================
 
 # ============================== BARPLOT ======================================
+
 
 # animes_temp = animes.loc[:,['uid','title','genre','score']]
 # animes_temp['genre'] = animes['genre'].str.split("', '")
